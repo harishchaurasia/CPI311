@@ -43,15 +43,17 @@ namespace Assignment5
             Add<Renderer>(renderer);
 
             //Make a path
-
-            search = new AStarSearch(gridSize, gridSize);
+            search = new AStarSearch(gridSize, gridSize); // AStar Search has the same grid size
             float gridW = Terrain.size.X / gridSize;
             float gridH = Terrain.size.Y / gridSize;
 
             for (int i = 0; i < gridSize; i++)
                 for (int j = 0; j < gridSize; j++)
                 {
-                    Vector3 pos = new Vector3(gridW * i + gridW / 2 - Terrain.size.X / 2, 0, gridH * j + gridH / 2 - Terrain.size.Y / 2);
+                    Vector3 pos = new Vector3(gridW * i + gridW / 2 - Terrain.size.X / 2,
+                        0,
+                        gridH * j + gridH / 2 - Terrain.size.Y / 2);
+
                     if (Terrain.GetAltitude(pos) > 1.0)
                         search.Nodes[j, i].Passable = false;
                 }
@@ -89,7 +91,32 @@ namespace Assignment5
             Transform.Update();
             base.Update();
         }
+        private Vector3 GetGridPosition(Vector3 gridPos)
+        {
+            float gridW = Terrain.size.X / search.Cols;
+            float gridH = Terrain.size.Y / search.Rows;
+            return new Vector3(gridW * gridPos.X + gridW / 2 - Terrain.size.X / 2,
+                0,
+                gridH * gridPos.Z + gridH / 2 - Terrain.size.Y / 2);
+        }
+
+        private void RandomPathFinding()
+        {
+            Random random = new Random();
+            while (!(search.Start = search.Nodes[random.Next(search.Rows), random.Next(search.Cols)]).Passable);
+            search.End = search.Nodes[search.Rows / 2, search.Cols / 2]; // center position
+            search.Search();
+            path = new List<Vector3>();
+            AStarNode current = search.End;
+            var count = 0;
+            while (current != null)
+            {
+                count++;
+                path.Insert(0, current.Position);
+                current = current.Parent;
 
 
+            }
+        }
     }
 }
