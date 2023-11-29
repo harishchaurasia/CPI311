@@ -65,12 +65,22 @@ namespace Assignment5
             //Camera 1
             camera = new Camera();
             camera.Transform = new Transform();
-            camera.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 3 + Vector3.Up * 5;
+            camera.Transform.LocalPosition = Vector3.Up * 60;
+            camera.Transform.Rotate(Vector3.Left, MathHelper.PiOver2-0.2f);
 
-            //Camera 2
+            light = new Light();
+            light.Transform = new Transform();
+            light.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 5 + Vector3.Up * 5;
+
+            player = new Player(terrain, Content, camera, GraphicsDevice,light);
+
+
+
+
+            /*//Camera 2
             camera2 = new Camera();
             camera2.Transform = new Transform();
-            camera2.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 3 + Vector3.Up * 50;
+            camera2.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 3 + Vector3.Up * 50;*/
         }
 
         protected override void Update(GameTime gameTime)
@@ -85,7 +95,14 @@ namespace Assignment5
             InputManager.Update();
 
 
-            if ((InputManager.IsKeyDown(Keys.W)) && !((terrain.GetAltitude(camera.Transform.LocalPosition))>0) && !((terrain.GetAltitude(camera.Transform.LocalPosition)) > 0))
+            if (InputManager.IsKeyDown(Keys.Up))
+                camera.Transform.Rotate(Vector3.Right, Time.ElapsedGameTime);
+
+            if (InputManager.IsKeyDown(Keys.Down))
+                camera.Transform.Rotate(Vector3.Left, Time.ElapsedGameTime);
+
+
+            /*if ((InputManager.IsKeyDown(Keys.W)) && !((terrain.GetAltitude(camera.Transform.LocalPosition))>0) && !((terrain.GetAltitude(camera.Transform.LocalPosition)) > 0))
                 camera.Transform.LocalPosition += camera.Transform.Forward * Time.ElapsedGameTime * 8;
 
             if (InputManager.IsKeyDown(Keys.S))
@@ -93,17 +110,17 @@ namespace Assignment5
 
 
             if (InputManager.IsKeyDown(Keys.A))
-                /* camera.Transform.LocalPosition += camera.Transform.Left * Time.ElapsedGameTime * 10 */
+                *//* camera.Transform.LocalPosition += camera.Transform.Left * Time.ElapsedGameTime * 10 *//*
                 camera.Transform.Rotate(Vector3.Up, Time.ElapsedGameTime*2);
 
 
             if (InputManager.IsKeyDown(Keys.D))
-                /*camera.Transform.LocalPosition += camera.Transform.Right * Time.ElapsedGameTime * 10 */
-                camera.Transform.Rotate(Vector3.Down, Time.ElapsedGameTime*2);
+                *//*camera.Transform.LocalPosition += camera.Transform.Right * Time.ElapsedGameTime * 10 *//*
+                camera.Transform.Rotate(Vector3.Down, Time.ElapsedGameTime*2);*/
 
             //for the camera to not climb 
 
-            camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X, /*terrain.GetAltitude(camera.Transform.LocalPosition)*/0, camera.Transform.LocalPosition.Z) + Vector3.Up;  // not climbing up the wall
+            /*camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X, *//*terrain.GetAltitude(camera.Transform.LocalPosition)*//*0, camera.Transform.LocalPosition.Z) + Vector3.Up;  // not climbing up the wall*/
 
             base.Update(gameTime);
         }
@@ -117,7 +134,7 @@ namespace Assignment5
             effect.Parameters["Projection"].SetValue(camera.Projection);
             effect.Parameters["World"].SetValue(terrain.Transform.World);
             effect.Parameters["CameraPosition"].SetValue(camera.Transform.Position);
-            effect.Parameters["LightPosition"].SetValue(camera.Transform.Position + Vector3.Up * 10);
+            effect.Parameters["LightPosition"].SetValue(camera.Transform.Position);   // +Vector3.Up * 10
             effect.Parameters["NormalMap"].SetValue(terrain.NormalMap);
 
 
@@ -125,6 +142,7 @@ namespace Assignment5
             {
                 pass.Apply();
                 terrain.Draw();
+                player.Draw();
             }
 
 
