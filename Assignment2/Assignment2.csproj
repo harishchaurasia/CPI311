@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <RollForward>Major</RollForward>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <TieredCompilation>false</TieredCompilation>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Content\Earth.fbx" />
+    <None Remove="Content\Font.spritefont" />
+    <None Remove="Content\Ground.fbx" />
+    <None Remove="Content\GroundPlane.fbx" />
+    <None Remove="Content\Luna.fbx" />
+    <None Remove="Content\LunaModel.fbx" />
+    <None Remove="Content\Merc.fbx" />
+    <None Remove="Content\Mercury.fbx" />
+    <None Remove="Content\MercuryModel.fbx" />
+    <None Remove="Content\Player.fbx" />
+    <None Remove="Content\SimpleShading.fx" />
+    <None Remove="Content\Sphere %282%29.FBX" />
+    <None Remove="Content\Sun.fbx" />
+    <None Remove="Content\SunModel.fbx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameEngine\GameEngine.csproj" />
+  </ItemGroup>
+  <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
+    <Message Text="Restoring dotnet tools" Importance="High" />
+    <Exec Command="dotnet tool restore" />
+  </Target>
+</Project>
