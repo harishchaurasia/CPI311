@@ -15,11 +15,11 @@ namespace Assignment5
         Effect effect;
 
         Camera camera;
-        Camera camera2;
+
         Light light;
 
         Player player;
-        //Agent agent;
+        Agent agent;
 
         //************************
 
@@ -56,23 +56,27 @@ namespace Assignment5
 
             effect = Content.Load<Effect>("TerrainShader");
 
-            effect.Parameters["AmbientColor"].SetValue(new Vector3(0.1f, 0.1f, 0.1f));
-            effect.Parameters["DiffuseColor"].SetValue(new Vector3(0.3f, 0.1f, 0.1f));
-            effect.Parameters["SpecularColor"].SetValue(new Vector3(0f, 0f, 0.2f));
+            effect.Parameters["AmbientColor"].SetValue(new Vector3(0.2f, 0.2f, 0.2f));
+            effect.Parameters["DiffuseColor"].SetValue(new Vector3(0.1f, 0.1f, 0.1f));
+            effect.Parameters["SpecularColor"].SetValue(new Vector3(0.2f, 0.2f, 0.2f));
+            /*            effect.Parameters["AmbientColor"].SetValue(new Vector3(0.3f, 0.3f, 0.3f));
+                        effect.Parameters["DiffuseColor"].SetValue(new Vector3(0.5f, 0.5f, 0.5f));
+                        effect.Parameters["SpecularColor"].SetValue(new Vector3(0.1f, 0.1f, 0.1f));*/
             effect.Parameters["Shininess"].SetValue(20f);
 
 
             //Camera 1
             camera = new Camera();
             camera.Transform = new Transform();
-            camera.Transform.LocalPosition = Vector3.Up * 60;
-            camera.Transform.Rotate(Vector3.Left, MathHelper.PiOver2-0.2f);
+            camera.Transform.LocalPosition = Vector3.Up * 50;
+            camera.Transform.Rotate(Vector3.Left, MathHelper.PiOver2 - 0.2f);
 
             light = new Light();
             light.Transform = new Transform();
             light.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 5 + Vector3.Up * 5;
 
-            player = new Player(terrain, Content, camera, GraphicsDevice,light);
+            player = new Player(terrain, Content, camera, GraphicsDevice, light);
+            agent = new Agent(terrain, Content, camera, GraphicsDevice, light);
 
 
 
@@ -90,9 +94,9 @@ namespace Assignment5
 
             // TODO: Add your update logic here
 
-
             Time.Update(gameTime);
             InputManager.Update();
+
 
 
             if (InputManager.IsKeyDown(Keys.Up))
@@ -102,26 +106,8 @@ namespace Assignment5
                 camera.Transform.Rotate(Vector3.Left, Time.ElapsedGameTime);
 
 
-            /*if ((InputManager.IsKeyDown(Keys.W)) && !((terrain.GetAltitude(camera.Transform.LocalPosition))>0) && !((terrain.GetAltitude(camera.Transform.LocalPosition)) > 0))
-                camera.Transform.LocalPosition += camera.Transform.Forward * Time.ElapsedGameTime * 8;
-
-            if (InputManager.IsKeyDown(Keys.S))
-                camera.Transform.LocalPosition += camera.Transform.Backward * Time.ElapsedGameTime * 8;
-
-
-            if (InputManager.IsKeyDown(Keys.A))
-                *//* camera.Transform.LocalPosition += camera.Transform.Left * Time.ElapsedGameTime * 10 *//*
-                camera.Transform.Rotate(Vector3.Up, Time.ElapsedGameTime*2);
-
-
-            if (InputManager.IsKeyDown(Keys.D))
-                *//*camera.Transform.LocalPosition += camera.Transform.Right * Time.ElapsedGameTime * 10 *//*
-                camera.Transform.Rotate(Vector3.Down, Time.ElapsedGameTime*2);*/
-
-            //for the camera to not climb 
-
-            /*camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X, *//*terrain.GetAltitude(camera.Transform.LocalPosition)*//*0, camera.Transform.LocalPosition.Z) + Vector3.Up;  // not climbing up the wall*/
-
+            player.Update();
+            agent.Update();
             base.Update(gameTime);
         }
 
@@ -134,7 +120,7 @@ namespace Assignment5
             effect.Parameters["Projection"].SetValue(camera.Projection);
             effect.Parameters["World"].SetValue(terrain.Transform.World);
             effect.Parameters["CameraPosition"].SetValue(camera.Transform.Position);
-            effect.Parameters["LightPosition"].SetValue(camera.Transform.Position);   // +Vector3.Up * 10
+            effect.Parameters["LightPosition"].SetValue(light.Transform.Position);   // +Vector3.Up * 10
             effect.Parameters["NormalMap"].SetValue(terrain.NormalMap);
 
 
@@ -143,6 +129,7 @@ namespace Assignment5
                 pass.Apply();
                 terrain.Draw();
                 player.Draw();
+                agent.Draw();
             }
 
 

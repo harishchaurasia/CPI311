@@ -135,7 +135,7 @@ namespace Assignment3
                 foreach (GameObject gameObject in gameObjects)
                 {
                     Texture2D texture = Content.Load<Texture2D>("Square");
-                    Renderer renderer = new Renderer(model, gameObject.Transform, camera, Content, GraphicsDevice, 2, "SimpleShading", 20f, texture);
+                    Renderer renderer = new Renderer(model, gameObject.Transform, camera, Content, GraphicsDevice,light, 2, "SimpleShading", 20f, texture);
                     gameObject.Add<Renderer>(renderer);
                 }
                 showColor = false;
@@ -279,7 +279,7 @@ namespace Assignment3
             if (!showColor)
             {
                 Texture2D texture = Content.Load<Texture2D>("Square");
-                Renderer renderer = new Renderer(model, transform, camera, Content, GraphicsDevice, 2, "SimpleShading", 20f, texture);
+                Renderer renderer = new Renderer(model, transform, camera, Content, GraphicsDevice,light, 2, "SimpleShading", 20f, texture) ;
                 gameObject.Add<Renderer>(renderer);
             }
             

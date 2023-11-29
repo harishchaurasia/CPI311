@@ -1,10 +1,11 @@
-﻿using CPI311.GameEngine;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace CPI311.GameEngine
 {
@@ -15,6 +16,7 @@ namespace CPI311.GameEngine
         public Rigidbody Rigidbody { get { return Get<Rigidbody>(); } }
         public Collider Collider { get { return Get<Collider>(); } }
         public Renderer Renderer { get { return Get<Renderer>(); } }
+
         private Dictionary<Type, Component> Components { get; set; }
         private List<IUpdateable> Updateables { get; set; }
         private List<IRenderable> Renderables { get; set; }
@@ -29,8 +31,8 @@ namespace CPI311.GameEngine
             Drawables = new List<IDrawable>();
         }
 
-/*        //Assignment3 part 2
-        public void Add<T> (T component) where T : Component
+        //Assignment3 part 2
+        public void Add<T>(T component) where T : Component
         {
             Remove<T>();
             component.GameObject = this;
@@ -49,7 +51,7 @@ namespace CPI311.GameEngine
                 Drawables.Add(component as IDrawable);
             }
         }
-        //*******************/
+        //******************
 
         public T Add<T>() where T : Component, new()
         {
@@ -74,9 +76,10 @@ namespace CPI311.GameEngine
             return component;
         }
 
-        public void Add<T>(T Component) where T : Component
+/*        public void Add<T>(T Component) where T : Component
         {
-            Remove<T>();
+            //Remove<T>();
+            //Remove<T>();
             T component = Component;
             component.GameObject = this;
             component.Transform = Transform;
@@ -93,7 +96,8 @@ namespace CPI311.GameEngine
             {
                 Drawables.Add(component as IDrawable);
             }
-        }
+        }*/
+
 
         public T Get<T>() where T : Component
         {

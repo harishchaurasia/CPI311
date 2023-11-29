@@ -38,11 +38,6 @@ namespace CPI311.GameEngine
             get; set;
         }
 
-
-
-
-
-
         public Vector3 Scale
         {
             get
@@ -86,6 +81,24 @@ namespace CPI311.GameEngine
                     LocalPosition = (Matrix.Invert(Matrix.CreateScale(LocalScale) *
                     Matrix.CreateFromQuaternion(LocalRotation)) *
                     total * Matrix.Invert(Parent.World)).Translation;
+                }
+            }
+        }
+
+
+        // ADDED FROM YOSHI CODE
+        public Quaternion Rotation
+        {
+            get { return Quaternion.CreateFromRotationMatrix(World); }
+            set
+            {
+                if (Parent == null) LocalRotation = value;
+                else
+                {
+                    Vector3 scale, pos; Quaternion rot;
+                    world.Decompose(out scale, out rot, out pos);
+                    Matrix total = Matrix.CreateScale(scale) * Matrix.CreateFromQuaternion(value) * Matrix.CreateTranslation(pos);
+                    LocalRotation = Quaternion.CreateFromRotationMatrix(Matrix.Invert(Matrix.CreateScale(LocalScale)) * total * Matrix.Invert(Matrix.CreateTranslation(LocalPosition) * Parent.world));
                 }
             }
         }
@@ -138,6 +151,7 @@ namespace CPI311.GameEngine
         {
             LocalRotation *= Quaternion.CreateFromAxisAngle(axis, angle);
         }
+
         // Constructor
         public Transform()
         {
@@ -150,6 +164,13 @@ namespace CPI311.GameEngine
             Children = new List<Transform>();
             //***************
 
+            UpdateWorld();
+        }
+
+        // Assignment 3 Update according to Kobayashi
+
+        public void Update()
+        {
             UpdateWorld();
         }
     }

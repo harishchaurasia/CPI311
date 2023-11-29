@@ -67,11 +67,21 @@ namespace Assignment5
             if (path != null && path.Count > 0)
             {
                 // Move to the destination along the path
+                Vector3 currP = Transform.Position;
+                Vector3 destP = GetGridPosition(path[0]);
+                currP.Y = 0; 
+                destP.Y = 0;
 
-                if (... ) // if it reaches to a point, go to the next in path
+                Vector3 direction = Vector3.Distance(currP, destP) == 0? Vector3.Zero : Vector3.Normalize(destP - currP);
+
+                this.Rigidbody.Velocity = new Vector3(direction.X, 0 , direction.Z) * speed;
+
+                //Debug.WriteLine("P", currP);
+
+                if (Vector3.Distance(currP, destP) < 1.0f) // if it reaches to a point, go to the next in path
                 {
-
-                    if (...) // if it reached to the goal
+                    path.RemoveAt(0); // path[0] is removed
+                    if (path.Count == 0) // if it reached to the goal
                     {
                         path = null;
                         return;
@@ -81,13 +91,13 @@ namespace Assignment5
             else
             {
                 // Search again to make a new path.
+                RandomPathFinding();
+                Transform.LocalPosition = GetGridPosition(path[0]); //move to the start position
 
             }
 
-            this.Transform.LocalPosition = new Vector3(
-               this.Transform.LocalPosition.X,
-               Terrain.GetAltitude(this.Transform.LocalPosition),
-               this.Transform.LocalPosition.Z) + Vector3.Up;
+            this.Transform.LocalPosition = new Vector3(this.Transform.LocalPosition.X, Terrain.GetAltitude(this.Transform.LocalPosition), this.Transform.LocalPosition.Z) + Vector3.Up;
+
             Transform.Update();
             base.Update();
         }
@@ -100,7 +110,8 @@ namespace Assignment5
                 gridH * gridPos.Z + gridH / 2 - Terrain.size.Y / 2);
         }
 
-        private void RandomPathFinding()
+        //public void RandomPathFinding()
+        public void RandomPathFinding()
         {
             Random random = new Random();
             while (!(search.Start = search.Nodes[random.Next(search.Rows), random.Next(search.Cols)]).Passable);
@@ -109,13 +120,11 @@ namespace Assignment5
             path = new List<Vector3>();
             AStarNode current = search.End;
             var count = 0;
-            while (current != null)
+            while (current != null) // List class should have reverse function
             {
                 count++;
                 path.Insert(0, current.Position);
                 current = current.Parent;
-
-
             }
         }
     }
