@@ -38,6 +38,11 @@ namespace Assignment5
             Add<Renderer>(renderer);
         }
 
+        public Vector3 GetPosition()
+        {
+            return this.Transform.LocalPosition;
+        }
+
         public override void Update()
         {
             // Control the player

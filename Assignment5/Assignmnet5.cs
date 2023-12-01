@@ -21,6 +21,7 @@ namespace Assignment5
 
         Player player;
         Agent agent;
+        Bomb bomb;
 
         //************************
 
@@ -91,7 +92,8 @@ namespace Assignment5
 
             player = new Player(terrain, Content, camera, GraphicsDevice, light);
             agent = new Agent(terrain, Content, camera, GraphicsDevice, light);
-
+            bomb = new Bomb(terrain, Content, camera, GraphicsDevice, light);
+            bomb.player = player;
 
 
 
@@ -122,6 +124,8 @@ namespace Assignment5
 
             player.Update();
             agent.Update();
+            bomb.Update();
+            
             base.Update(gameTime);
         }
 
@@ -162,6 +166,7 @@ namespace Assignment5
                 terrain.Draw();
                 player.Draw();
                 agent.Draw();
+                bomb.Draw();    
             }
 
             
