@@ -34,21 +34,21 @@ namespace Assignment5
             // *** Renderer
             Texture2D texture = Content.Load<Texture2D>("Square");
             Renderer renderer = new Renderer(
-                Content.Load<Model>("Sphere"), Transform, camera, Content, graphicsDevice, light,
-                1, "SimpleShading", 20f, texture);
+                Content.Load<Model>("Sphere"), Transform, camera, Content, graphicsDevice, light, 1, "SimpleShading", 20f, texture);
             Add<Renderer>(renderer);
         }
 
         public override void Update()
         {
             // Control the player
-            if (InputManager.IsKeyDown(Keys.W)) // move forward
+            //if ((InputManager.IsKeyDown(Keys.W) && !(Terrain.GetAltitude(this.Transform.LocalPosition) > 0.01f)) || (InputManager.IsKeyDown(Keys.W) && !(Terrain.GetAltitude(this.Transform.LocalPosition.X) > 0.01f))) // move forward
+            if (InputManager.IsKeyDown(Keys.W) && !(Terrain.GetAltitude(this.Transform.LocalPosition) > 0.01f)) // move forward
                 this.Transform.LocalPosition += this.Transform.Forward * Time.ElapsedGameTime * 10f;
             if (InputManager.IsKeyDown(Keys.S)) // move backwars
                 this.Transform.LocalPosition += this.Transform.Backward * Time.ElapsedGameTime * 10f;
-            if (InputManager.IsKeyDown(Keys.A)) // move backwars
-                this.Transform.LocalPosition += this.Transform.Left * Time.ElapsedGameTime * 10f;
-            if (InputManager.IsKeyDown(Keys.D)) // move backwars
+            if (InputManager.IsKeyDown(Keys.A) && !(Terrain.GetAltitude(this.Transform.LocalPosition) > 0.3f)) // move backwars
+                    this.Transform.LocalPosition += this.Transform.Left * Time.ElapsedGameTime * 10f;
+            if (InputManager.IsKeyDown(Keys.D) && !(Terrain.GetAltitude(this.Transform.LocalPosition) > 0.3f)) // move backwars
                 this.Transform.LocalPosition += this.Transform.Right * Time.ElapsedGameTime * 10f;
 
             // change the Y position corresponding to the terrain (maze)

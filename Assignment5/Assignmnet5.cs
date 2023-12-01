@@ -15,6 +15,7 @@ namespace Assignment5
         Effect effect;
 
         Camera camera;
+        Camera miniMap;
 
         Light light;
 
@@ -71,6 +72,19 @@ namespace Assignment5
             camera.Transform.LocalPosition = Vector3.Up * 50;
             camera.Transform.Rotate(Vector3.Left, MathHelper.PiOver2 - 0.2f);
 
+            /*//MiniMap
+            miniMap = new Camera();
+            miniMap.Position = new Vector2(1f,1f);
+            miniMap.Size = new Vector2(.5f, .5f);
+            miniMap.Transform = new Transform();
+            miniMap.Transform.LocalPosition = new Vector3(0,100,0);
+            miniMap.Transform.LookAt(Vector3.Zero);
+
+            miniMap.Projection = Matrix.CreateOrthographic(100, 100, 0.1f, 1000f);
+            miniMap.Transform = new Transform();
+            miniMap.Transform.LocalPosition = new Vector3(0, 50, 0); // Adjust as needed
+            miniMap.Transform.Rotate(Vector3.Left, MathHelper.PiOver2); */
+
             light = new Light();
             light.Transform = new Transform();
             light.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 5 + Vector3.Up * 5;
@@ -111,9 +125,26 @@ namespace Assignment5
             base.Update(gameTime);
         }
 
+        public float altitude()
+        {
+            return terrain.GetAltitude(camera.Transform.LocalPosition);
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+/*
+            GraphicsDevice.Viewport = miniMap.Viewport;
+            effect.Parameters["View"].SetValue(miniMap.View);
+            effect.Parameters["Projection"].SetValue(miniMap.Projection);
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                terrain.Draw();
+                player.Draw();
+                agent.Draw();
+            }*/
+
 
 
             effect.Parameters["View"].SetValue(camera.View);
@@ -124,6 +155,7 @@ namespace Assignment5
             effect.Parameters["NormalMap"].SetValue(terrain.NormalMap);
 
 
+
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
@@ -131,6 +163,9 @@ namespace Assignment5
                 player.Draw();
                 agent.Draw();
             }
+
+            
+
 
 
             // TODO: Add your drawing code here
