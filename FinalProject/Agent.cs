@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 
-namespace Assignment5
+namespace FinalProject
 {
     public class Agent : GameObject
     {
@@ -33,22 +33,28 @@ namespace Assignment5
             Add<Rigidbody>(rigidbody);
 
             // *** SphereCollider
-            SphereCollider collider = new SphereCollider();
+            /*SphereCollider collider = new SphereCollider();
             collider.Radius = 1;
             collider.Transform = Transform;
-            Add<Collider>(collider);
+            Add<Collider>(collider);*/
+
+            //Box collider
+
+            BoxCollider collider = new BoxCollider();
+            collider.Size = 0.025f;
 
             // *** Renderer
             Texture2D texture = Content.Load<Texture2D>("Square");
             /*Model model = Content.Load<Model>("Sphere");*/
             Model model = Content.Load<Model>("Sphere");
             Renderer renderer = new Renderer(model, Transform, camera, Content, graphicsDevice, light, 1, "SimpleShading", 20f, texture);
-            renderer.Material.Diffuse = Color.Yellow.ToVector3();
-            renderer.Material.Ambient = Color.Yellow.ToVector3();
-            renderer.Material.Specular = Color.Yellow.ToVector3();
+            renderer.ObjectTransform.Scale = new Vector3(0.9f, 0.9f, 0.9f);
+            renderer.Material.Diffuse = Color.ForestGreen.ToVector3();
+            renderer.Material.Ambient = Color.ForestGreen.ToVector3();
+            renderer.Material.Specular = Color.ForestGreen.ToVector3();
             Add<Renderer>(renderer);
 
-            // *** Make a path ***
+            // *** Making a path ***
             search = new AStarSearch(gridSize, gridSize); // A Star Search has the same grid size
             float gridW = Terrain.size.X / gridSize;
             float gridH = Terrain.size.Y / gridSize;
@@ -72,7 +78,7 @@ namespace Assignment5
                 // Move to the destination along the path
                 Vector3 currP = Transform.Position;
                 Vector3 destP = GetGridPosition(path[0]);
-                Debug.WriteLine("Path 0 is " + path[0]);
+                //Debug.WriteLine("Path 0 is " + path[0]);
                 currP.Y = 0;
                 destP.Y = 0;
 

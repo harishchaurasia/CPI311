@@ -9,8 +9,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
-namespace Assignment5
+namespace FinalProject
 {
     public class Player : GameObject
     {
@@ -18,6 +19,12 @@ namespace Assignment5
 
         public Player(TerrainRenderer terrain, ContentManager Content, Camera camera, GraphicsDevice graphicsDevice, Light light) : base()
         {
+
+
+            this.Transform.Scale = new Vector3 (1, 1, 1);
+            this.Transform.Parent = camera.Transform;
+
+
             Terrain = terrain;
             // *** Rigidbody
             Rigidbody rigidbody = new Rigidbody();
@@ -38,12 +45,15 @@ namespace Assignment5
             renderer.Material.Ambient = Color.Indigo.ToVector3();
             renderer.Material.Specular = Color.Indigo.ToVector3();
             Add<Renderer>(renderer);
+
+
+            
         }
 
         public override void Update()
         {
             // Control the player
-            if (InputManager.IsKeyDown(Keys.W)) // move forward
+            /*if (InputManager.IsKeyDown(Keys.W)) // move forward
             {
                 if (Terrain.GetAltitude(this.Transform.LocalPosition + this.Transform.Forward) <= 4)
                 {
@@ -56,12 +66,15 @@ namespace Assignment5
                 {
                     this.Transform.LocalPosition += this.Transform.Backward * Time.ElapsedGameTime * 10f;
                 }
-            }
-            if (InputManager.IsKeyDown(Keys.A)) // move left
+            }*/
+
+            /*if (InputManager.IsKeyDown(Keys.A)) // move left
             {
                 if (Terrain.GetAltitude(this.Transform.LocalPosition + this.Transform.Left) <= 4)
                 {
                     this.Transform.LocalPosition += this.Transform.Left * Time.ElapsedGameTime * 10f;
+
+                    //this.Transform.Rotate(Vector3.Down, Time.ElapsedGameTime * 3);
                 }
             }
             if (InputManager.IsKeyDown(Keys.D)) // move right
@@ -71,11 +84,22 @@ namespace Assignment5
                     this.Transform.LocalPosition += this.Transform.Right * Time.ElapsedGameTime * 10f;
                 }
             }
-            // change the Y position corresponding to the terrain (maze)
-            this.Transform.LocalPosition = new Vector3(
-                this.Transform.LocalPosition.X,
-                Terrain.GetAltitude(this.Transform.LocalPosition),
-                this.Transform.LocalPosition.Z) + Vector3.Up;
+
+            if (InputManager.IsKeyDown(Keys.A))
+                Debug.WriteLine("A pressed");
+            this.Transform.Rotate(-Vector3.UnitY, Time.ElapsedGameTime * 3);
+            //camera.Transform.LocalPosition += camera.Transform.Left * Time.ElapsedGameTime * 10;
+
+            if (InputManager.IsKeyDown(Keys.D))
+                Debug.WriteLine("D pressed");
+            this.Transform.Rotate(Vector3.Down, Time.ElapsedGameTime * 3);
+            //camera.Transform.LocalPosition += camera.Transform.Right * Time.ElapsedGameTime * 10;*/
+
+
+
+            //this.Transform.LocalPosition = new Vector3(this.Transform.LocalPosition.X,Terrain.GetAltitude(this.Transform.LocalPosition),this.Transform.LocalPosition.Z) + Vector3.Up;
+
+            this.Transform.Position = this.Transform.Parent.Position;
 
             base.Update();
         }

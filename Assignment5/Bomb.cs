@@ -13,7 +13,7 @@ namespace Assignment5
     public class Bomb : GameObject
     {
         public AStarSearch search;
-        List<Vector3> path;
+        public List<Vector3> path;
 
         public Player player;
 
@@ -27,7 +27,6 @@ namespace Assignment5
             path = null;
 
             //Rigidbody
-
             Rigidbody rigidbody = new Rigidbody();
             rigidbody.Transform = Transform;
             rigidbody.Mass = 1.0f;
@@ -42,6 +41,9 @@ namespace Assignment5
             //Renderer
             Texture2D texture = Content.Load<Texture2D>("Square");
             Renderer renderer = new Renderer(Content.Load<Model>("Sphere"), Transform, camera, Content, graphicsDevice, light, 1, "SimpleShading", 20f, texture);
+            renderer.Material.Diffuse = Color.Black.ToVector3();
+            renderer.Material.Ambient = Color.Black.ToVector3();
+            renderer.Material.Specular = Color.Black.ToVector3();
             Add<Renderer>(renderer);
 
             //Make a path
@@ -59,9 +61,8 @@ namespace Assignment5
                     if (Terrain.GetAltitude(pos) > 1.0)
                         search.Nodes[j, i].Passable = false;
                 }
-
-
         }
+
 
 
         public override void Update()
@@ -125,9 +126,9 @@ namespace Assignment5
             {
                 search.Start = search.End;
             }
-            
+
             /*search.End = search.Nodes[search.Rows / 2, search.Cols / 2]; // center position*/
-            search.End = search.Nodes[(int)((player.Transform.Position.X + 45)/5) % search.Rows+1, (int)((player.Transform.Position.Z + 45)/5) % search.Cols+1];
+            search.End = search.Nodes[(int)((player.Transform.Position.X + 45) / 5) % search.Rows + 1, (int)((player.Transform.Position.Z + 45) / 5) % search.Cols + 1];
             search.Search();
             path = new List<Vector3>();
             AStarNode current = search.End;

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using CPI311.GameEngine;
+using System.Diagnostics;
 
 namespace Assignment5
 {
@@ -15,13 +16,20 @@ namespace Assignment5
         Effect effect;
 
         Camera camera;
-        Camera miniMap;
-
         Light light;
 
         Player player;
-        Agent agent;
+        Agent agent1;
+        Agent agent2;
+        Agent agent3;
         Bomb bomb;
+
+        SpriteFont font;
+
+        int agentsCaught = 0;
+        int screenNum = 0;
+
+        string finalTime;
 
         //************************
 
@@ -61,9 +69,6 @@ namespace Assignment5
             effect.Parameters["AmbientColor"].SetValue(new Vector3(0.2f, 0.2f, 0.2f));
             effect.Parameters["DiffuseColor"].SetValue(new Vector3(0.1f, 0.1f, 0.1f));
             effect.Parameters["SpecularColor"].SetValue(new Vector3(0.2f, 0.2f, 0.2f));
-            /*            effect.Parameters["AmbientColor"].SetValue(new Vector3(0.3f, 0.3f, 0.3f));
-                        effect.Parameters["DiffuseColor"].SetValue(new Vector3(0.5f, 0.5f, 0.5f));
-                        effect.Parameters["SpecularColor"].SetValue(new Vector3(0.1f, 0.1f, 0.1f));*/
             effect.Parameters["Shininess"].SetValue(20f);
 
 
@@ -73,34 +78,20 @@ namespace Assignment5
             camera.Transform.LocalPosition = Vector3.Up * 50;
             camera.Transform.Rotate(Vector3.Left, MathHelper.PiOver2 - 0.2f);
 
-            /*//MiniMap
-            miniMap = new Camera();
-            miniMap.Position = new Vector2(1f,1f);
-            miniMap.Size = new Vector2(.5f, .5f);
-            miniMap.Transform = new Transform();
-            miniMap.Transform.LocalPosition = new Vector3(0,100,0);
-            miniMap.Transform.LookAt(Vector3.Zero);
-
-            miniMap.Projection = Matrix.CreateOrthographic(100, 100, 0.1f, 1000f);
-            miniMap.Transform = new Transform();
-            miniMap.Transform.LocalPosition = new Vector3(0, 50, 0); // Adjust as needed
-            miniMap.Transform.Rotate(Vector3.Left, MathHelper.PiOver2); */
-
             light = new Light();
             light.Transform = new Transform();
             light.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 5 + Vector3.Up * 5;
 
             player = new Player(terrain, Content, camera, GraphicsDevice, light);
-            agent = new Agent(terrain, Content, camera, GraphicsDevice, light);
+            agent1 = new Agent(terrain, Content, camera, GraphicsDevice, light);
+            agent2 = new Agent(terrain, Content, camera, GraphicsDevice, light);
+            agent3 = new Agent(terrain, Content, camera, GraphicsDevice, light);
             bomb = new Bomb(terrain, Content, camera, GraphicsDevice, light);
             bomb.player = player;
 
 
+            font = Content.Load<SpriteFont>("Font");
 
-            /*//Camera 2
-            camera2 = new Camera();
-            camera2.Transform = new Transform();
-            camera2.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 3 + Vector3.Up * 50;*/
         }
 
         protected override void Update(GameTime gameTime)
@@ -108,24 +99,68 @@ namespace Assignment5
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
-
-            Time.Update(gameTime);
             InputManager.Update();
 
+            // TODO: Add your update logic here
+            if (screenNum == 0)
+            {
+                Debug.WriteLine("Here");
+                if (InputManager.IsKeyDown(Keys.Enter))
+                {
+
+                    screenNum = 1;
+                }
+            }
+            else if (screenNum == 1)
+            {
+                Time.Update(gameTime);
 
 
-            if (InputManager.IsKeyDown(Keys.Up))
-                camera.Transform.Rotate(Vector3.Right, Time.ElapsedGameTime);
+                if (InputManager.IsKeyDown(Keys.Up))
+                {
+                    camera.Transform.Rotate(Vector3.Right, Time.ElapsedGameTime);
+                }
+                if (InputManager.IsKeyDown(Keys.Down))
+                {
+                    camera.Transform.Rotate(Vector3.Left, Time.ElapsedGameTime);
+                }
 
-            if (InputManager.IsKeyDown(Keys.Down))
-                camera.Transform.Rotate(Vector3.Left, Time.ElapsedGameTime);
+                player.Update();
+                agent1.Update();
+                agent2.Update();
+                agent3.Update();
+                bomb.Update();
+
+                Vector3 normal;
+                if (player.Collider.Collides(agent1.Collider, out normal))
+                {
+                    agent1.path = null;
+                    agentsCaught++;
+                }
+                if (player.Collider.Collides(agent2.Collider, out normal))
+                {
+                    agent2.path = null;
+                    agentsCaught++;
+                }
+                if (player.Collider.Collides(agent3.Collider, out normal))
+                {
+                    agent3.path = null;
+                    agentsCaught++;
+                }
+                if (player.Collider.Collides(bomb.Collider, out normal))
+                {
+                    bomb.path = null;
+                    screenNum = 3;
+                }
+
+                if (agentsCaught >= 3)
+                {
+                    screenNum = 2;
+                    finalTime = Time.TotalGameTime.TotalSeconds.ToString();
+                }
+            }
 
 
-            player.Update();
-            agent.Update();
-            bomb.Update();
-            
             base.Update(gameTime);
         }
 
@@ -136,44 +171,61 @@ namespace Assignment5
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-/*
-            GraphicsDevice.Viewport = miniMap.Viewport;
-            effect.Parameters["View"].SetValue(miniMap.View);
-            effect.Parameters["Projection"].SetValue(miniMap.Projection);
-
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                terrain.Draw();
-                player.Draw();
-                agent.Draw();
-            }*/
-
-
-
-            effect.Parameters["View"].SetValue(camera.View);
-            effect.Parameters["Projection"].SetValue(camera.Projection);
-            effect.Parameters["World"].SetValue(terrain.Transform.World);
-            effect.Parameters["CameraPosition"].SetValue(camera.Transform.Position);
-            effect.Parameters["LightPosition"].SetValue(light.Transform.Position);   // +Vector3.Up * 10
-            effect.Parameters["NormalMap"].SetValue(terrain.NormalMap);
-
-
-
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                terrain.Draw();
-                player.Draw();
-                agent.Draw();
-                bomb.Draw();    
-            }
-
-            
-
-
 
             // TODO: Add your drawing code here
+            if (screenNum == 0)
+            {
+                GraphicsDevice.Clear(Color.Black);
+
+                _spriteBatch.Begin();
+                _spriteBatch.DrawString(font, " Game Task: Catch the 3 Yelllow Agents While Avoiding The Black Bomb", new Vector2(150, 50), Color.Red);
+                _spriteBatch.DrawString(font, "Press [Enter] to start", new Vector2(320, 220), Color.Red);
+                _spriteBatch.End();
+            }
+            else if (screenNum == 1)
+            {
+                GraphicsDevice.Clear(Color.CornflowerBlue);
+
+                effect.Parameters["View"].SetValue(camera.View);
+                effect.Parameters["Projection"].SetValue(camera.Projection);
+                effect.Parameters["World"].SetValue(terrain.Transform.World);
+                effect.Parameters["LightPosition"].SetValue(light.Transform.Position);
+                effect.Parameters["CameraPosition"].SetValue(camera.Transform.Position);
+                effect.Parameters["NormalMap"].SetValue(terrain.NormalMap);
+
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    terrain.Draw();
+                    player.Draw();
+                    agent1.Draw();
+                    agent2.Draw();
+                    agent3.Draw();
+                    bomb.Draw();
+                }
+
+                _spriteBatch.Begin();
+                _spriteBatch.DrawString(font, "Caught Agents: " + agentsCaught, new Vector2(75, 10), Color.Red);
+                _spriteBatch.DrawString(font, "Time Spent: " + Time.TotalGameTime.TotalSeconds, new Vector2(75, 30), Color.Red);
+                _spriteBatch.End();
+            }
+            else if (screenNum == 2)
+            {
+                GraphicsDevice.Clear(Color.CornflowerBlue);
+                _spriteBatch.Begin();
+                _spriteBatch.DrawString(font, "You Caught 3 Agents In: " + finalTime, new Vector2(225, 50), Color.Red);
+                _spriteBatch.DrawString(font, "Press [ESCAPE] To Exit", new Vector2(275, 150), Color.Black);
+                _spriteBatch.End();
+            }
+            else
+            {
+                GraphicsDevice.Clear(Color.CornflowerBlue);
+                _spriteBatch.Begin();
+                _spriteBatch.DrawString(font, "A Bomb...Exploded on you...Booom.....You died!", new Vector2(200, 50), Color.Black);
+                _spriteBatch.DrawString(font, "Press [ESCAPE] To Exit", new Vector2(250, 100), Color.Black);
+                _spriteBatch.End();
+            }
+
 
             base.Draw(gameTime);
         }

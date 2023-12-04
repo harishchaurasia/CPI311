@@ -77,7 +77,10 @@ namespace Assignment3
             camera = new Camera();
             camera.Transform = cameraTransfrom;
             font = Content.Load<SpriteFont>("Font");
+
             light = new Light();
+            light.Transform = new Transform();
+            light.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 5 + Vector3.Up * 5;
 
             AddGameObject();
             AddGameObject();
