@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using CPI311.GameEngine;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Audio;
+//using SharpDX.Direct2D1;
 //using SharpDX.Direct3D9;
 //sing SharpDX.Direct3D9;
 
@@ -19,6 +20,7 @@ namespace FinalProject
         TerrainRenderer terrain;
         Effect effect;
         Light light;
+        Texture2D car;
 
         Camera camera;
         Camera thirdCam;
@@ -84,6 +86,9 @@ namespace FinalProject
             negative_beep = Content.Load<SoundEffect>("negative_beep");
             win = Content.Load<SoundEffect>("levelwin");
             audiInstance = audi.CreateInstance();
+
+
+            car = Content.Load<Texture2D>("carrrr");
 
 
 
@@ -158,12 +163,6 @@ namespace FinalProject
                 audiInstance.Stop();
             }
 
-
-
-
-
-
-
             InputManager.Update();
 
             if (screenNum == 0)
@@ -236,6 +235,7 @@ namespace FinalProject
                 if (bountyCollected >= 5)
                 {
                     win.Play();
+                    audiInstance.Stop();
                     screenNum = 2;
                     finalTime = Time.TotalGameTime.TotalSeconds.ToString();
                 }
@@ -287,8 +287,6 @@ namespace FinalProject
                     height = height - 0.25f;
                 }
 
-
-                //camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X,terrain.GetAltitude(camera.Transform.LocalPosition),camera.Transform.LocalPosition.Z) + Vector3.Up;
                 //camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X, 0, camera.Transform.LocalPosition.Z) + Vector3.Up;
                 camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X, height, camera.Transform.LocalPosition.Z) + Vector3.Up;
             }
@@ -312,8 +310,9 @@ namespace FinalProject
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
                 _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "Game Task: Collect  5  Golden Balls to win the Game.", new Vector2(205, 50), Color.Green);
-                _spriteBatch.DrawString(font, "Press [Enter] to start", new Vector2(320, 220), Color.Green);
+                _spriteBatch.Draw(car, new Rectangle(0, 0, 800, 600), Color.White);
+                _spriteBatch.DrawString(font, "Game Task: Collect  5  Golden Balls to win the Game.", new Vector2(205, 50), Color.Red);
+                _spriteBatch.DrawString(font, "Press [Enter] to start", new Vector2(320, 220), Color.Red);
                 _spriteBatch.End();
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             }
@@ -321,13 +320,6 @@ namespace FinalProject
             {
                 GraphicsDevice.Clear(Color.CornflowerBlue);
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-                /*effect.Parameters["View"].SetValue(camera.View);
-                effect.Parameters["Projection"].SetValue(camera.Projection);
-                effect.Parameters["World"].SetValue(terrain.Transform.World);
-                effect.Parameters["LightPosition"].SetValue(light.Transform.Position);
-                effect.Parameters["CameraPosition"].SetValue(camera.Transform.Position);
-                effect.Parameters["NormalMap"].SetValue(terrain.NormalMap);*/
 
 
                 if (camToggle)
