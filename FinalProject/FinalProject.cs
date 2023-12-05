@@ -49,6 +49,7 @@ namespace FinalProject
         SoundEffect audi;
         SoundEffect collect_ring;
         SoundEffect negative_beep;
+        SoundEffect win;
 
 
 
@@ -81,6 +82,7 @@ namespace FinalProject
             audi = Content.Load<SoundEffect>("audi");
             collect_ring = Content.Load<SoundEffect>("collect-ring");
             negative_beep = Content.Load<SoundEffect>("negative_beep");
+            win = Content.Load<SoundEffect>("levelwin");
             audiInstance = audi.CreateInstance();
 
 
@@ -159,6 +161,9 @@ namespace FinalProject
 
 
 
+
+
+
             InputManager.Update();
 
             if (screenNum == 0)
@@ -228,8 +233,9 @@ namespace FinalProject
                     screenNum = 3;
                 }
 
-                if (bountyCollected >= 3)
+                if (bountyCollected >= 5)
                 {
+                    win.Play();
                     screenNum = 2;
                     finalTime = Time.TotalGameTime.TotalSeconds.ToString();
                 }
@@ -262,6 +268,12 @@ namespace FinalProject
                 if (InputManager.IsKeyPressed(Keys.Tab))
                 {
                     camToggle = !camToggle;
+                }
+
+
+                if (InputManager.IsKeyPressed(Keys.C))
+                {
+                    bountyCollected++;
                 }
 
 
@@ -300,8 +312,8 @@ namespace FinalProject
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
                 _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "Game Task: Collect  10  Golden Balls to win the Game.", new Vector2(205, 50), Color.Red);
-                _spriteBatch.DrawString(font, "Press [Enter] to start", new Vector2(320, 220), Color.Red);
+                _spriteBatch.DrawString(font, "Game Task: Collect  5  Golden Balls to win the Game.", new Vector2(205, 50), Color.Green);
+                _spriteBatch.DrawString(font, "Press [Enter] to start", new Vector2(320, 220), Color.Green);
                 _spriteBatch.End();
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             }
@@ -339,7 +351,7 @@ namespace FinalProject
 
 
                 _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "Bounty Collected: " + bountyCollected + "/10", new Vector2(75, 10), Color.Red);
+                _spriteBatch.DrawString(font, "Bounty Collected: " + bountyCollected + " / 5", new Vector2(75, 10), Color.Red);
                 _spriteBatch.DrawString(font, "Time Spent: " + Time.TotalGameTime.TotalSeconds, new Vector2(75, 30), Color.Red);
                 _spriteBatch.End();
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -364,8 +376,9 @@ namespace FinalProject
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
                 _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "You collected all 10 golden bounties in: " + finalTime, new Vector2(225, 50), Color.Red);
-                _spriteBatch.DrawString(font, "Press [ESCAPE] To Exit", new Vector2(275, 150), Color.Red);
+                _spriteBatch.DrawString(font, "You collected all 5 golden bounties in: " + finalTime, new Vector2(225, 100), Color.Green);
+                _spriteBatch.DrawString(font, "Winner Winner Chicken Dinner, Yay", new Vector2(250, 175), Color.Green);
+                _spriteBatch.DrawString(font, "Press [ESCAPE] To Exit", new Vector2(300, 225), Color.Green);
                 _spriteBatch.End();
             }
             else
@@ -374,8 +387,8 @@ namespace FinalProject
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
                 _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "A  Bomb...Exploded on you...Boom...You died!", new Vector2(225, 100), Color.Red);
-                _spriteBatch.DrawString(font, "Press [ESCAPE] To Exit", new Vector2(290, 200), Color.Red);
+                _spriteBatch.DrawString(font, "A  Bomb...Exploded on you...Boom...You died!", new Vector2(225, 100), Color.Green);
+                _spriteBatch.DrawString(font, "Press [ESCAPE] To Exit", new Vector2(290, 225), Color.Green);
                 _spriteBatch.End();
             }
             base.Draw(gameTime);

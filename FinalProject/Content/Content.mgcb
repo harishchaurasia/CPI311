@@ -51,6 +51,12 @@
 /processorParam:TextureFormat=Compressed
 /build:Font.spritefont
 
+#begin levelwin.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:levelwin.wav
+
 #begin mazeH.png
 /importer:TextureImporter
 /processor:TextureProcessor
