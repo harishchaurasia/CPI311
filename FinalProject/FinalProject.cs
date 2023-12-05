@@ -13,16 +13,20 @@ namespace FinalProject
         private SpriteBatch _spriteBatch;
 
 
-        
+
         TerrainRenderer terrain;
-        Camera camera;
-        Camera topCam;
-        Camera activatedCam;
-        bool camToggle = true;
         Effect effect;
         Light light;
 
-        Player player; 
+        Camera camera;
+        Camera thirdCam;
+
+
+        bool camToggle = true;
+
+
+
+        Player player;
         Agent agent1;
         Agent agent2;
         Agent agent3;
@@ -35,7 +39,8 @@ namespace FinalProject
         string finalTime;
         int bountyCollected = 0;
         int screenNum = 0;
-        
+        int height = 0;
+
 
 
 
@@ -50,9 +55,9 @@ namespace FinalProject
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            // TODO: Add your initialization logic here
 
-            Time.Initialize();
+            Time.Initialize();
             InputManager.Initialize();
             ScreenManager.Initialize(_graphics);
 
@@ -64,7 +69,7 @@ namespace FinalProject
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             terrain = new TerrainRenderer(Content.Load<Texture2D>("mazeH2"), Vector2.One * 100, Vector2.One * 200); // (100,100) size and (200,200) resolution
-            terrain.NormalMap = Content.Load<Texture2D>("mazeN2");
+            terrain.NormalMap = Content.Load<Texture2D>("mazeN2");
             terrain.Transform = new Transform();
             terrain.Transform.LocalScale *= new Vector3(1, 5, 1);
 
@@ -78,18 +83,20 @@ namespace FinalProject
             camera = new Camera();
             camera.Transform = new Transform();
             camera.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 3 + Vector3.Up * 5;
-            //camera.Transform = player.Transform;
 
 
-            /*topCam = new Camera();
-            topCam.Transform = new Transform();
-            topCam.Transform.LocalPosition = Vector3.Up * 50;
-            topCam.Transform.Rotate(Vector3.Left, MathHelper.PiOver2 - 0.2f);*/
+            thirdCam = new Camera();
+            thirdCam.Transform = new Transform();
+            thirdCam.Transform.LocalPosition = Vector3.Up * 50;
+            thirdCam.Transform.Rotate(Vector3.Left, MathHelper.PiOver2 - 0.2f);
+            //camera.Transform = player.Transform;
+
 
 
             light = new Light();
             light.Transform = new Transform();
-            light.Transform.LocalPosition = Vector3.Backward * 5 + Vector3.Right * 5 + Vector3.Up * 5;
+            light.Transform.LocalPosition = Vector3.Backward * -0.5f + Vector3.Up * 3;
+            light.Transform.Parent = camera.Transform;
 
 
             agent1 = new Agent(terrain, Content, camera, GraphicsDevice, light);
@@ -98,10 +105,12 @@ namespace FinalProject
             agent4 = new Agent(terrain, Content, camera, GraphicsDevice, light);
             agent5 = new Agent(terrain, Content, camera, GraphicsDevice, light);
             player = new Player(terrain, Content, camera, GraphicsDevice, light);
+            enemies = new Enemies(terrain, Content, camera, GraphicsDevice, light);
+            enemies.player = player;
 
 
-            // TODO: use this.Content to load your game content here
-        }
+            // TODO: use this.Content to load your game content here
+        }
 
         protected override void Update(GameTime gameTime)
         {
@@ -114,22 +123,65 @@ namespace FinalProject
             Time.Update(gameTime);
             InputManager.Update();
 
-            
 
 
-            if (InputManager.IsKeyDown(Keys.W))
-                camera.Transform.LocalPosition += camera.Transform.Forward * Time.ElapsedGameTime * 10;
 
-            if (InputManager.IsKeyDown(Keys.S))
-                camera.Transform.LocalPosition += camera.Transform.Backward * Time.ElapsedGameTime * 10;
+            if (InputManager.IsKeyDown(Keys.W) && !(terrain.GetAltitude(camera.Transform.LocalPosition + camera.Transform.Forward * Time.ElapsedGameTime *10f) > 0.01f))
+                camera.Transform.LocalPosition += camera.Transform.Forward * Time.ElapsedGameTime * 5;
+
+            if (InputManager.IsKeyDown(Keys.S) && !(terrain.GetAltitude(camera.Transform.LocalPosition + camera.Transform.Backward * Time.ElapsedGameTime * 10f) > 0.01))
+                camera.Transform.LocalPosition += camera.Transform.Backward * Time.ElapsedGameTime * 5;
 
             if (InputManager.IsKeyDown(Keys.A))
-                camera.Transform.Rotate(Vector3.Up, Time.ElapsedGameTime * 3);
-            //camera.Transform.LocalPosition += camera.Transform.Left * Time.ElapsedGameTime * 10;
+                camera.Transform.Rotate(Vector3.Up, Time.ElapsedGameTime * 5);
+            //camera.Transform.LocalPosition += camera.Transform.Left * Time.ElapsedGameTime * 10;
 
-            if (InputManager.IsKeyDown(Keys.D))
-                camera.Transform.Rotate(Vector3.Down, Time.ElapsedGameTime * 3);
+            if (InputManager.IsKeyDown(Keys.D))
+                camera.Transform.Rotate(Vector3.Down, Time.ElapsedGameTime * 5);
             //camera.Transform.LocalPosition += camera.Transform.Right * Time.ElapsedGameTime * 10;
+
+
+
+            if (InputManager.IsKeyPressed(Keys.Tab))
+            {
+                camToggle = !camToggle;
+            }
+
+
+            if (InputManager.IsKeyDown(Keys.Up))
+            {
+                height = height + 1;
+            }
+            if (InputManager.IsKeyDown(Keys.Down) && !((player.Transform.Position.Y) < 2))
+            {
+                height = height - 1;
+            }
+
+            /*if (camToggle) 
+            {
+                camera.Transform = firstTransform;
+            }
+            else if (!camToggle)
+            {
+                camera.Transform = thirdTransform;
+            }*/
+
+
+
+            //camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X,terrain.GetAltitude(camera.Transform.LocalPosition),camera.Transform.LocalPosition.Z) + Vector3.Up;
+            //camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X,0, camera.Transform.LocalPosition.Z) + Vector3.Up;
+
+            //camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X, 0, camera.Transform.LocalPosition.Z) + Vector3.Up;
+            camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X, height, camera.Transform.LocalPosition.Z) + Vector3.Up;
+
+
+            agent1.Update();
+            agent2.Update();
+            agent3.Update();
+            agent4.Update();
+            agent5.Update();
+            player.Update();
+            enemies.Update();
 
             Vector3 normal;
             if (player.Collider.Collides(agent1.Collider, out normal))
@@ -158,54 +210,63 @@ namespace FinalProject
                 screenNum = 2;
                 finalTime = Time.TotalGameTime.TotalSeconds.ToString();
             }
-        }
 
+            //activatedCam = camToggle ? camera : topCam;
 
-
-        /*if (InputManager.IsKeyDown(Keys.Tab))
-        {
-            camToggle = !camToggle;
-        }
-
-
-        if (InputManager.IsKeyDown(Keys.Up))
-        {
-            topCam.Transform.Rotate(Vector3.Right, Time.ElapsedGameTime);
-        }
-        if (InputManager.IsKeyDown(Keys.Down))
-        {
-            topCam.Transform.Rotate(Vector3.Left, Time.ElapsedGameTime);
-        }*/
-
-
-
-        //camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X,terrain.GetAltitude(camera.Transform.LocalPosition),camera.Transform.LocalPosition.Z) + Vector3.Up;
-        //camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X,0, camera.Transform.LocalPosition.Z) + Vector3.Up;
-        camera.Transform.LocalPosition = new Vector3(camera.Transform.LocalPosition.X, 0, camera.Transform.LocalPosition.Z) + Vector3.Up;
-
-
-            agent1.Update();
-            agent2.Update();
-            agent3.Update();
-            agent4.Update();
-            agent5.Update();
-            player.Update();
             base.Update(gameTime);
+        }
+
+        public float altitude()
+        {
+            return terrain.GetAltitude(camera.Transform.LocalPosition);
         }
 
         protected override void Draw(GameTime gameTime)
         {
+
+            /*if (screenNum == 0)
+            {
+                GraphicsDevice.Clear(Color.Black);
+
+                _spriteBatch.Begin();
+                _spriteBatch.DrawString(font, " Game Task: Catch the 3 Yelllow Agents While Avoiding The Black Bomb", new Vector2(150, 50), Color.Red);
+                _spriteBatch.DrawString(font, "Press [Enter] to start", new Vector2(320, 220), Color.Red);
+                _spriteBatch.End();
+            }*/
+
+            
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
 
-            activatedCam = camToggle ? camera : topCam;
 
-            effect.Parameters["View"].SetValue(camera.View);
+
+            /*effect.Parameters["View"].SetValue(camera.View);
             effect.Parameters["Projection"].SetValue(camera.Projection);
             effect.Parameters["World"].SetValue(terrain.Transform.World);
             effect.Parameters["CameraPosition"].SetValue(camera.Transform.Position);
             effect.Parameters["LightPosition"].SetValue(light.Transform.Position);
-            effect.Parameters["NormalMap"].SetValue(terrain.NormalMap);
+            effect.Parameters["NormalMap"].SetValue(terrain.NormalMap);*/
+
+
+            if (camToggle)
+            {
+                effect.Parameters["View"].SetValue(camera.View);
+                effect.Parameters["Projection"].SetValue(camera.Projection);
+                effect.Parameters["World"].SetValue(terrain.Transform.World);
+                effect.Parameters["CameraPosition"].SetValue(camera.Transform.Position);
+                effect.Parameters["LightPosition"].SetValue(light.Transform.Position);
+                effect.Parameters["NormalMap"].SetValue(terrain.NormalMap);
+            }
+            else
+            {
+                effect.Parameters["View"].SetValue(thirdCam.View);
+                effect.Parameters["Projection"].SetValue(thirdCam.Projection);
+                effect.Parameters["World"].SetValue(terrain.Transform.World);
+                effect.Parameters["CameraPosition"].SetValue(thirdCam.Transform.Position);
+                effect.Parameters["LightPosition"].SetValue(light.Transform.Position);
+                effect.Parameters["NormalMap"].SetValue(terrain.NormalMap);
+            }
+
 
 
 
@@ -214,12 +275,13 @@ namespace FinalProject
             {
                 pass.Apply();
                 terrain.Draw();
-                player.Draw();  
+                player.Draw();
                 agent1.Draw();
                 agent2.Draw();
                 agent3.Draw();
                 agent4.Draw();
                 agent5.Draw();
+                enemies.Draw();
             }
 
 
