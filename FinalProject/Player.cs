@@ -15,16 +15,12 @@ namespace FinalProject
 {
     public class Player : GameObject
     {
+
+        Camera _camera;
         public TerrainRenderer Terrain { get; set; }
 
         public Player(TerrainRenderer terrain, ContentManager Content, Camera camera, GraphicsDevice graphicsDevice, Light light) : base()
         {
-
-
-            this.Transform.Scale = new Vector3 (1, 1, 1);
-            this.Transform.Parent = camera.Transform;
-
-
             Terrain = terrain;
             // *** Rigidbody
             Rigidbody rigidbody = new Rigidbody();
@@ -46,8 +42,10 @@ namespace FinalProject
             renderer.Material.Specular = Color.Indigo.ToVector3();
             Add<Renderer>(renderer);
 
+            _camera = camera;
 
-            
+            //this.Transform.Parent = _camera.Transform;
+
         }
 
         public override void Update()
@@ -84,22 +82,13 @@ namespace FinalProject
                     this.Transform.LocalPosition += this.Transform.Right * Time.ElapsedGameTime * 10f;
                 }
             }
-
-            if (InputManager.IsKeyDown(Keys.A))
-                Debug.WriteLine("A pressed");
-            this.Transform.Rotate(-Vector3.UnitY, Time.ElapsedGameTime * 3);
-            //camera.Transform.LocalPosition += camera.Transform.Left * Time.ElapsedGameTime * 10;
-
-            if (InputManager.IsKeyDown(Keys.D))
-                Debug.WriteLine("D pressed");
-            this.Transform.Rotate(Vector3.Down, Time.ElapsedGameTime * 3);
-            //camera.Transform.LocalPosition += camera.Transform.Right * Time.ElapsedGameTime * 10;*/
+            */
 
 
 
             //this.Transform.LocalPosition = new Vector3(this.Transform.LocalPosition.X,Terrain.GetAltitude(this.Transform.LocalPosition),this.Transform.LocalPosition.Z) + Vector3.Up;
 
-            this.Transform.Position = this.Transform.Parent.Position;
+            this.Transform.LocalPosition = _camera.Transform.LocalPosition;
 
             base.Update();
         }

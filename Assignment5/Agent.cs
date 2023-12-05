@@ -21,7 +21,7 @@ namespace Assignment5
         public TerrainRenderer Terrain;
 
         public Agent(TerrainRenderer terrain, ContentManager Content, Camera camera,
-    GraphicsDevice graphicsDevice, Light light) : base()
+        GraphicsDevice graphicsDevice, Light light) : base()
         {
             Terrain = terrain;
             path = null;
@@ -43,6 +43,7 @@ namespace Assignment5
             /*Model model = Content.Load<Model>("Sphere");*/
             Model model = Content.Load<Model>("Sphere");
             Renderer renderer = new Renderer(model, Transform, camera, Content, graphicsDevice, light, 1, "SimpleShading", 20f, texture);
+            //renderer.ObjectTransform.Scale = new Vector3 (3, 3, 3);
             renderer.Material.Diffuse = Color.Yellow.ToVector3();
             renderer.Material.Ambient = Color.Yellow.ToVector3();
             renderer.Material.Specular = Color.Yellow.ToVector3();
@@ -63,8 +64,6 @@ namespace Assignment5
                         search.Nodes[j, i].Passable = false;
                 }
         }
-
-
         public override void Update()
         {
             if (path != null && path.Count > 0)

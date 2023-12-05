@@ -205,24 +205,27 @@ namespace Assignment5
                 }
 
                 _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "Caught Agents: " + agentsCaught, new Vector2(75, 10), Color.Red);
+                _spriteBatch.DrawString(font, "Bounty Collected: " + agentsCaught, new Vector2(75, 10), Color.Red);
                 _spriteBatch.DrawString(font, "Time Spent: " + Time.TotalGameTime.TotalSeconds, new Vector2(75, 30), Color.Red);
                 _spriteBatch.End();
+
             }
             else if (screenNum == 2)
             {
                 GraphicsDevice.Clear(Color.CornflowerBlue);
+
                 _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "You Caught 3 Agents In: " + finalTime, new Vector2(225, 50), Color.Red);
+                _spriteBatch.DrawString(font, "You caught 3 agents in: " + finalTime, new Vector2(225, 50), Color.Red);
                 _spriteBatch.DrawString(font, "Press [ESCAPE] To Exit", new Vector2(275, 150), Color.Black);
                 _spriteBatch.End();
             }
             else
             {
-                GraphicsDevice.Clear(Color.CornflowerBlue);
+                GraphicsDevice.Clear(Color.Black);
+
                 _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "A Bomb...Exploded on you...Booom.....You died!", new Vector2(200, 50), Color.Black);
-                _spriteBatch.DrawString(font, "Press [ESCAPE] To Exit", new Vector2(250, 100), Color.Black);
+                _spriteBatch.DrawString(font, "A Bomb...Exploded on you...Booom.....You died!", new Vector2(200, 50), Color.Red);
+                _spriteBatch.DrawString(font, "Press [ESCAPE] To Exit", new Vector2(250, 100), Color.Red);
                 _spriteBatch.End();
             }
 

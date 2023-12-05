@@ -42,6 +42,7 @@ namespace FinalProject
             //Renderer
             Texture2D texture = Content.Load<Texture2D>("Square");
             Renderer renderer = new Renderer(Content.Load<Model>("Sphere"), Transform, camera, Content, graphicsDevice, light, 1, "SimpleShading", 20f, texture);
+            renderer.ObjectTransform.Scale = new Vector3 (0.9f, 0.9f, 0.9f);
             renderer.Material.Diffuse = Color.Black.ToVector3();
             renderer.Material.Ambient = Color.Black.ToVector3();
             renderer.Material.Specular = Color.Black.ToVector3();
